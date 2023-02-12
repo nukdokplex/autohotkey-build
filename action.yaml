@@ -82,8 +82,7 @@ runs:
       if: ${{ inputs.compression == 'upx' }}
       with:
         repository: upx/upx
-        latest: false
-        tag: ${{ inputs.version }}
+        latest: true
         filename: "*win64.zip"
         tarBall: false
         zipBall: false
