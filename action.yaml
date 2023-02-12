@@ -49,7 +49,7 @@ runs:
   steps:
     - name: "Download latest AutoHotkey release"
       uses: "robinraju/release-downloader@v1.7"
-      if: ${{inputs.version == "latest"}}
+      if: ${{inputs.version == latest}}
       with:
         repository: "AutoHotkey/AutoHotkey"
         latest: true
@@ -59,7 +59,7 @@ runs:
         out-file-path: "._ahk/installer"
     - name: "Download specific AutoHotkey release"
       uses: "robinraju/release-downloader@v1.7"
-      if: ${{inputs.version != "latest"}}
+      if: ${{inputs.version != latest}}
       with:
         repository: "AutoHotkey/AutoHotkey"
         latest: false
@@ -79,7 +79,7 @@ runs:
         out-file-path: "._ahk/ahk2exe"
     - name: "Download latest UPX release"
       uses: "robinraju/release-downloader@v1.7"
-      if: ${{inputs.compression == "upx"}}
+      if: ${{ inputs.compression == upx }}
       with:
         repository: "upx/upx"
         latest: false
