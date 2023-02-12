@@ -27,10 +27,6 @@ inputs:
     description: Specifies which compression method to use. "none" - do not use compression, "upx" - use UPX compression. There is no MPRESS 'cause it's discontinued. Don't try to use it, it won't work. Defaults to "none".
     required: false
     default: "none"
-  verbose: 
-    description: Specifies whether to use detailed output at compile time. Defaults to true.
-    required: false
-    default: "true"
   in:
     description: Specifies a folder with scripts or a single script to be compiled. If you specify a folder, files with the extensions ".ahk", ".ahk2" will be taken. Recursive search in folder is not present. Defaults to CWD.
     required: false
@@ -193,10 +189,7 @@ runs:
                 $command += " /compress 0"
             }
 
-            $command += " /silent"
-            if ("${{ inputs.verbose }}" -like "true"){
-                $command += " verbose"
-            }
+            $command += " /silent verbose"
 
             if ("${{ inputs.x64 }}" -like "true"){
                 Write-Output ("Invoking " + $command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + [System.IO.Path]::GetFileNameWithoutExtension($file) + "${{ inputs.x64_suffix }}.exe")
