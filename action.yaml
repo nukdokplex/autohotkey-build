@@ -49,9 +49,9 @@ runs:
   steps:
     - name: "Download latest AutoHotkey release"
       uses: "robinraju/release-downloader@v1.7"
-      if: ${{inputs.version == latest}}
+      if: ${{ inputs.version == 'latest' }}
       with:
-        repository: "AutoHotkey/AutoHotkey"
+        repository: AutoHotkey/AutoHotkey
         latest: true
         filename: "*.exe"
         tarBall: false
@@ -59,9 +59,9 @@ runs:
         out-file-path: "._ahk/installer"
     - name: "Download specific AutoHotkey release"
       uses: "robinraju/release-downloader@v1.7"
-      if: ${{inputs.version != latest}}
+      if: ${{ inputs.version != 'latest' }}
       with:
-        repository: "AutoHotkey/AutoHotkey"
+        repository: AutoHotkey/AutoHotkey
         latest: false
         tag: ${{ inputs.version }}
         filename: "*.exe"
@@ -71,7 +71,7 @@ runs:
     - name: "Download latest AHK2Exe release"
       uses: "robinraju/release-downloader@v1.7"
       with:
-        repository: "AutoHotkey/Ahk2Exe"
+        repository: AutoHotkey/Ahk2Exe
         latest: true
         filename: "*.zip"
         tarBall: false
@@ -79,9 +79,9 @@ runs:
         out-file-path: "._ahk/ahk2exe"
     - name: "Download latest UPX release"
       uses: "robinraju/release-downloader@v1.7"
-      if: ${{ inputs.compression == upx }}
+      if: ${{ inputs.compression == 'upx' }}
       with:
-        repository: "upx/upx"
+        repository: upx/upx
         latest: false
         tag: ${{ inputs.version }}
         filename: "*win64.zip"
