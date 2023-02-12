@@ -32,9 +32,9 @@ jobs:
           in: test_scripts/v2
           out: outv2
           icon: ""
-      - name: Tree output directory
+      - name: List output directories
         shell: pwsh
         run: |
-          tree outv1.1
-          tree outv2
+          ls outv1.1
+          ls outv2
 
