@@ -1,0 +1,42 @@
+name: Continuos Integration
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Test AHK v1.1.29.01
+        uses: nukdokplex/autohotkey-build@master
+        with:
+          version: v1.1.29.01
+          x64: true
+          x86: true
+          compression: upx
+          verbose: true
+          in: test_scripts/v1.1
+          out: outv1.1
+          icon: ""
+      - name: Test AHK v2.0.2
+        uses: nukdokplex/autohotkey-build@master
+        with:
+          version: v2.0.2
+          x64: true
+          x86: true
+          compression: upx
+          verbose: true
+          in: test_scripts/v2
+          out: outv2
+          icon: ""
+      - name: Tree output directory
+        shell: pwsh
+        run: |
+          tree outv1.1
+          tree outv2
+
