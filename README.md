@@ -25,7 +25,7 @@ The mechanism of this action can be broken down into four main steps:
 
 ## Usage example
 
-Suppose your scripts are at the root of your repository. Then after checkout they will be in the current working directory. Also lets suppose that you want to build in `./build`. Lets see how we can do this:
+Let's suppose that your scripts are in the root of your repository. Then after checkout they will be in the current working directory. Also let's suppose that you want to build in `./build`. Lets see how we can deal with it:
 
 ```yaml
 name: Build
@@ -74,7 +74,7 @@ jobs:
 |out|Specifies the folder for output files.|`false`|`build`|
 |icon|Specifies icon file to use.|`false`| |
 
-## These made this possible
+## Thanks for making this possible
 
 Many thanks to [@nekocodeX](https://github.com/nekocodeX) for this great idea!
 
