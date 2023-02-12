@@ -210,12 +210,11 @@ runs:
         }
 
         Write-Output "Build completed!"
-
-    
-
-
-   
-
-  
-  
-  
+    - name: Clean
+      shell: pwsh
+      run: |
+        $cwd = (Get-Location).Path
+        $ahk = "$cwd\._ahk"
+        Write-Output "Cleaning $ahk"
+        Remove-Item $ahk -Recurse -Force
+        Write-Output "Cleaning complete!"
