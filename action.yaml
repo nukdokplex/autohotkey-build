@@ -30,11 +30,11 @@ inputs:
   in:
     description: Specifies a folder with scripts or a single script to be compiled. If you specify a folder, files with the extensions ".ahk", ".ahk2" will be taken. Recursive search in folder is not present. Defaults to CWD.
     required: false
-    default: "$cwd"
+    default: ""
   out:
     description: Specifies the folder for output files. Defaults to "build".
     required: false
-    default: "$cwd/build"
+    default: "build"
   icon:
     description: Specifies icon file to use. Defaults to nothing.
     required: false
