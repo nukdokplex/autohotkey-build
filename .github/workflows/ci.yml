@@ -19,7 +19,6 @@ jobs:
           x64: true
           x86: true
           compression: upx
-          verbose: true
           in: test_scripts/v1.1
           out: outv1.1
           icon: ""
@@ -30,7 +29,6 @@ jobs:
           x64: true
           x86: true
           compression: upx
-          verbose: true
           in: test_scripts/v2
           out: outv2
           icon: ""
