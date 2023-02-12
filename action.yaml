@@ -211,3 +211,6 @@ runs:
         Write-Output "Cleaning $ahk"
         Remove-Item $ahk -Recurse -Force
         Write-Output "Cleaning complete!"
+branding:
+  icon: code
+  color: green
