@@ -12,10 +12,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Test AHK v1.1.29.01
+      - name: Test AHK v1.1.22.01
         uses: nukdokplex/autohotkey-build@master
         with:
-          version: v1.1.29.01
+          version: v1.1.22.01
           x64: true
           x86: true
           compression: upx
