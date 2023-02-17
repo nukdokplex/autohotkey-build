@@ -1,10 +1,6 @@
 name: Continuos Integration
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -13,25 +9,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Test AHK v1.1.22.01
-        uses: nukdokplex/autohotkey-build@master
+        uses: ./
         with:
           version: v1.1.22.01
           x64: true
           x86: true
           compression: upx
-          in: test_scripts/v1.1
+          in: test/scripts/v1.1
           out: outv1.1
-          icon: ""
+          icon: test/icons
       - name: Test AHK v2.0.2
-        uses: nukdokplex/autohotkey-build@master
+        uses: ./
         with:
           version: v2.0.2
           x64: true
           x86: true
           compression: upx
-          in: test_scripts/v2
+          in: test/scripts/v2
           out: outv2
-          icon: ""
+          icon: test/icons/test.ico
       - name: List output directories
         shell: pwsh
         run: |

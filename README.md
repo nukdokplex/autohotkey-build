@@ -72,7 +72,7 @@ jobs:
 |compression|Specifies which compression method to use. "none" - do not use compression, "upx" - use UPX compression. There is no MPRESS 'cause it's discontinued. Don't try to use it, it won't work.|`false`|`none`|
 |in|Specifies a folder with scripts or a single script to be compiled. If you specify a folder, files with the extensions ".ahk", ".ahk2" will be taken. Recursive search in folder is not present.|`false`|Current Working Directory|
 |out|Specifies the folder for output files.|`false`|`build`|
-|icon|Specifies icon file to use.|`false`| |
+|icon|Specifies icons. If you pass a single file, it will apply to all scripts. If you pass a folder, an icon with the same name will be used for each script. For example, the script named `test.ahk` will use the file `test.ico` in that folder.|`false`| |
 
 ## Thanks for making this possible
 

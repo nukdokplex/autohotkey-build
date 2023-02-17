@@ -91,40 +91,40 @@ runs:
 
         Write-Output "Preparing installer..." 
         Get-ChildItem -Path "$ahk\installer" -Filter *.exe -Recurse | ForEach-Object {
-            Move-Item -Path $_.FullName -Destination "$ahk\installer\installer.exe" -Force
+          Move-Item -Path $_.FullName -Destination "$ahk\installer\installer.exe" -Force
         }
 
         Write-Output "Preparing AHK2Exe..."
         Get-ChildItem -Path "$ahk\ahk2exe" -Filter *.zip | ForEach-Object {
-            Expand-Archive -Path $_.FullName -DestinationPath "$ahk\ahk2exe"
+          Expand-Archive -Path $_.FullName -DestinationPath "$ahk\ahk2exe"
         }
         Get-ChildItem -Path "$ahk\ahk2exe" -Filter *.exe -Recurse | ForEach-Object {
-            Move-Item -Path $_.FullName -Destination "$ahk\ahk2exe\ahk2exe.exe" -Force
+          Move-Item -Path $_.FullName -Destination "$ahk\ahk2exe\ahk2exe.exe" -Force
         }
 
         if ("upx" -eq "${{ inputs.compression }}") {
-            Write-Output "Preparing UPX..."
-            Get-ChildItem -Path "$ahk\upx" -Filter *.zip | ForEach-Object {
-                Expand-Archive -Path $_.FullName -DestinationPath "$ahk\upx"
-            }
-            Get-ChildItem -Path "$ahk\upx" -Filter *.exe -Recurse | ForEach-Object {
-                Move-Item -Path $_.FullName -Destination "$ahk\ahk2exe\upx.exe" -Force
-            }
+          Write-Output "Preparing UPX..."
+          Get-ChildItem -Path "$ahk\upx" -Filter *.zip | ForEach-Object {
+              Expand-Archive -Path $_.FullName -DestinationPath "$ahk\upx"
+          }
+          Get-ChildItem -Path "$ahk\upx" -Filter *.exe -Recurse | ForEach-Object {
+              Move-Item -Path $_.FullName -Destination "$ahk\ahk2exe\upx.exe" -Force
+          }
         }
 
         $ahkDist = "$ahk\installation"
 
         if ("${{ inputs.version }}" -like "v1.1.*") {
-            # Version 1.1.x
-            Write-Output "Performing AHK v1.1.x install..."
-            Invoke-Expression "$ahk\installer\installer.exe /S /D=$ahkDist /E"
+          # Version 1.1.x
+          Write-Output "Performing AHK v1.1.x install..."
+          Invoke-Expression "$ahk\installer\installer.exe /S /D=$ahkDist /E"
         } elseif ("${{ inputs.version }}" -like "v2.*") {
-            # Version 2.x
-            Write-Output "Performing AHK v2.x install..."
-            Invoke-Expression "$ahk\installer\installer.exe /silent /installto $ahkDist"
+          # Version 2.x
+          Write-Output "Performing AHK v2.x install..."
+          Invoke-Expression "$ahk\installer\installer.exe /silent /installto $ahkDist"
         } else {
-            # Incompatible version
-            throw "Incompatible version ${{ inputs.version }} of AHK!"
+          # Incompatible version
+          throw "Incompatible version ${{ inputs.version }} of AHK!"
         }
 
         Write-Output "AHK ${{ inputs.version }} installation completed! Ready to build!"
@@ -134,72 +134,103 @@ runs:
         $cwd = (Get-Location).Path
         $ahk = "$cwd\._ahk"
         $files = [System.Collections.ArrayList]@()
+        $icons = [System.Collections.ArrayList]@()
+        $iconType = Get-Item "$cwd\${{ inputs.icon }}"
 
         if ((Get-Item "$cwd\${{ inputs.in }}") -is [System.IO.DirectoryInfo]) {
-            Write-Output "Input is directory, searching files..."
+          Write-Output "Input is directory, searching files..."
 
-            $fileSpecs = ForEach-Object{("$cwd\${{ inputs.in }}\*.ahk"), $("$cwd\${{ inputs.in }}\*.ahk2")}
+          $fileSpecs = ForEach-Object{("$cwd\${{ inputs.in }}\*.ahk"), $("$cwd\${{ inputs.in }}\*.ahk2")}
+
+          Get-ChildItem -Path $fileSpecs | ForEach-Object {
+            $files.Add($_.FullName)
+          }
+        } elseif ((Get-Item "$cwd\${{ inputs.in }}") -is [System.IO.FileInfo]) {
+          Write-Output "Input is file, adding it..."
+
+          $files.Add("$cwd\${{ inputs.in }}")
+        } else {
+          throw "Input doesn't exist!"
+        }
+
+        if ("${{ inputs.icon }}" -ne ""){
+          if ($iconType -is [System.IO.DirectoryInfo]) {
+            Write-Output "Icon is directory, searching files..."
+
+            $fileSpecs = ForEach-Object{("$cwd\${{ inputs.icon }}\*.ico")}
 
             Get-ChildItem -Path $fileSpecs | ForEach-Object {
-                $files.Add($_.FullName)
+              $icons.Add($_.FullName)
             }
-        } elseif ((Get-Item "$cwd\${{ inputs.in }}") -is [System.IO.DirectoryInfo]) {
-            Write-Output "Input is file, adding it..."
+          } elseif ($iconType -is [System.IO.FileInfo]) {
+            Write-Output "Icon is file, adding it..."
 
-            $files.Add("$cwd\${{ inputs.in }}")
+            $icons.Add("$cwd\${{ inputs.icon }}")
+          } else {
+            Write-Output "Icon doesn't exist. Skipping."
+          }
         } else {
-            throw "Input doesn't exist!"
+          Write-Output "Icon is empty. Skipping."
         }
 
         if (Test-Path -Path "$cwd\${{ inputs.out }}") {
-            Write-Output "Output dir already exists."
+          Write-Output "Output dir already exists."
         } else {
-            Write-Output "Output dir doesn't exist. Creating..."
-            mkdir -p "$cwd\${{ inputs.out }}"
+          Write-Output "Output dir doesn't exist. Creating..."
+          mkdir -p "$cwd\${{ inputs.out }}"
         }
 
         $x64BasePath = "$ahk\installation"
         $x86BasePath = "$ahk\installation"
 
         if ("${{ inputs.version }}" -like "v1.1.*"){
-            Write-Output "Compiling using AHK ${{ inputs.version }}..."
-            $x64BasePath += "\Compiler\Unicode 64-bit.bin"
-            $x86BasePath += "\Compiler\Unicode 32-bit.bin"
+          Write-Output "Compiling using AHK ${{ inputs.version }}..."
+          $x64BasePath += "\Compiler\Unicode 64-bit.bin"
+          $x86BasePath += "\Compiler\Unicode 32-bit.bin"
 
         } elseif ("${{ inputs.version }}" -like "v2.*") {
-            Write-Output "Compiling using AHK ${{ inputs.version }}..."
-            $x64BasePath += "\v2\AutoHotkey64.exe"
-            $x86BasePath += "\v2\AutoHotkey32.exe"
+          Write-Output "Compiling using AHK ${{ inputs.version }}..."
+          $x64BasePath += "\v2\AutoHotkey64.exe"
+          $x86BasePath += "\v2\AutoHotkey32.exe"
 
         } else {
-            throw "Incompatible version ${{ inputs.version }}!"
+          throw "Incompatible version ${{ inputs.version }}!"
         }
 
         $ahk2exe = "$ahk\ahk2exe\ahk2exe.exe"
 
         foreach($file in $files) {
-            $command = "$ahk2exe"
-            $command += " /in $file"
-            if ("${{ inputs.icon }}" -ne "") {
-                $command += " /icon $cwd\${{ inputs.icon }}"
+          $fileNameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($file)
+          $command = "$ahk2exe"
+          $command += " /silent verbose"
+          $command += " /in $file"
+          if ("${{ inputs.icon }}" -ne "") {
+            if ($iconType -is [System.IO.DirectoryInfo]){
+              foreach ($icon in $icons){
+                if ($fileNameWithoutExtension -eq [System.IO.Path]::GetFileNameWithoutExtension($icon)){
+                  $command += " /icon $icon"
+                  break
+                }
+              }
+            } elseif ($iconType -is [System.IO.FileInfo]){
+              $command += " /icon " + $iconType.FullName
             }
-            if ("${{ inputs.compression }}" -eq "upx") {
-                $command += " /compress 2"
-            } else {
-                $command += " /compress 0"
-            }
+          } 
+          if ("$compression" -eq "upx") {
+            $command += " /compress 2"
+          } else {
+            $command += " /compress 0"
+          }
 
-            $command += " /silent verbose"
+          if ("${{ inputs.x64 }}" -like "true"){
+            Write-Output ("Invoking " + $command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + $fileNameWithoutExtension + "${{ inputs.x64_suffix }}.exe")
+            Invoke-Expression ($command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + $fileNameWithoutExtension + "${{ inputs.x64_suffix }}.exe")
+          }
 
-            if ("${{ inputs.x64 }}" -like "true"){
-                Write-Output ("Invoking " + $command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + [System.IO.Path]::GetFileNameWithoutExtension($file) + "${{ inputs.x64_suffix }}.exe")
-                Invoke-Expression ($command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + [System.IO.Path]::GetFileNameWithoutExtension($file) + "${{ inputs.x64_suffix }}.exe")
-            }
-
-            if ("${{ inputs.x86 }}" -like "true"){
-                Write-Output ("Invoking " + $command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + [System.IO.Path]::GetFileNameWithoutExtension($file) + "${{ inputs.x86_suffix }}.exe")
-                Invoke-Expression ($command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + [System.IO.Path]::GetFileNameWithoutExtension($file) + "${{ inputs.x86_suffix }}.exe")
-            }
+          if ("${{ inputs.x86 }}" -like "true"){
+            Write-Output ("Invoking " + $command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + $fileNameWithoutExtension + "${{ inputs.x86_suffix }}.exe")
+            Invoke-Expression ($command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + $fileNameWithoutExtension + "${{ inputs.x86_suffix }}.exe")
+          }
         }
 
         Write-Output "Build completed!"
