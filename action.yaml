@@ -152,6 +152,26 @@ runs:
             throw "Input doesn't exist!"
         }
 
+        if ("${{ inputs.icon }}" -ne ""){
+          if ((Get-Item "$cwd\${{ inputs.icon }}") -is [System.IO.DirectoryInfo]) {
+            Write-Output "Icon is directory, searching files..."
+
+            $fileSpecs = ForEach-Object{("$cwd\${{ inputs.in }}\*.ico")}
+
+            Get-ChildItem -Path $fileSpecs | ForEach-Object {
+                $icons.Add($_.FullName)
+            }
+          } elseif ((Get-Item "$cwd\${{ inputs.icon }}") -is [System.IO.FileInfo]) {
+            Write-Output "Icon is file, adding it..."
+
+            $icons.Add("$cwd\${{ inputs.icon }}")
+          } else {
+            Write-Output "Icon doesn't exist. Skipping."
+          }
+        } else {
+          Write-Output "Icon is empty. Skipping."
+        }
+
         if (Test-Path -Path "$cwd\${{ inputs.out }}") {
           Write-Output "Output dir already exists."
         } else {
