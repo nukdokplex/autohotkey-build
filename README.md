@@ -1,5 +1,5 @@
-# AutoHotKey Builder Action
-GitHub Action for building [AutoHotkey](https://autohotkey.com/) scripts with `AHK2Exe`.
+# AutoHotkey Builder Action
+GitHub Action for building [AHK](https://autohotkey.com/) scripts with `AHK2Exe`.
 
 
 ![Continous Integration](https://img.shields.io/github/actions/workflow/status/nukdokplex/autohotkey-build/ci.yml?label=integration)
@@ -50,9 +50,9 @@ jobs:
           x64: true
           x86: true
           compression: upx
-          in: 
+          in: ""
           out: build
-          icon: 
+          icon: "icons"
       - name: Do domething with builded scripts
         shell: pwsh
         run: |
