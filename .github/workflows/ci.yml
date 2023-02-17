@@ -9,7 +9,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Test AHK v1.1.22.01
-        uses: nukdokplex/autohotkey-build@master
+        uses: nukdokplex/autohotkey-build@${{ github.ref }}
         with:
           version: v1.1.22.01
           x64: true
@@ -19,7 +19,7 @@ jobs:
           out: outv1.1
           icon: test/icons
       - name: Test AHK v2.0.2
-        uses: nukdokplex/autohotkey-build@master
+        uses: nukdokplex/autohotkey-build@${{ github.ref }}
         with:
           version: v2.0.2
           x64: true
