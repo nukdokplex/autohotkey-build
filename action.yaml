@@ -144,7 +144,7 @@ runs:
           Get-ChildItem -Path $fileSpecs | ForEach-Object {
               $files.Add($_.FullName)
           }
-        } elseif ((Get-Item "$cwd\${{ inputs.in }}") -is [System.IO.DirectoryInfo]) {
+        } elseif ((Get-Item "$cwd\${{ inputs.in }}") -is [System.IO.FileInfo]) {
           Write-Output "Input is file, adding it..."
 
           $files.Add("$cwd\${{ inputs.in }}")
