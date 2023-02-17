@@ -143,14 +143,14 @@ runs:
           $fileSpecs = ForEach-Object{("$cwd\${{ inputs.in }}\*.ahk"), $("$cwd\${{ inputs.in }}\*.ahk2")}
 
           Get-ChildItem -Path $fileSpecs | ForEach-Object {
-              $files.Add($_.FullName)
+            $files.Add($_.FullName)
           }
         } elseif ((Get-Item "$cwd\${{ inputs.in }}") -is [System.IO.FileInfo]) {
           Write-Output "Input is file, adding it..."
 
           $files.Add("$cwd\${{ inputs.in }}")
         } else {
-            throw "Input doesn't exist!"
+          throw "Input doesn't exist!"
         }
 
         if ("${{ inputs.icon }}" -ne ""){
@@ -160,7 +160,7 @@ runs:
             $fileSpecs = ForEach-Object{("$cwd\${{ inputs.icon }}\*.ico")}
 
             Get-ChildItem -Path $fileSpecs | ForEach-Object {
-                $icons.Add($_.FullName)
+              $icons.Add($_.FullName)
             }
           } elseif ($iconType -is [System.IO.FileInfo]) {
             Write-Output "Icon is file, adding it..."
@@ -202,11 +202,12 @@ runs:
         foreach($file in $files) {
           $fileNameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($file)
           $command = "$ahk2exe"
+          $command += " /silent verbose"
           $command += " /in $file"
           if ("${{ inputs.icon }}" -ne "") {
             if ($iconType -is [System.IO.DirectoryInfo]){
               foreach ($icon in $icons){
-                if ($fileNameWithoutExtension -e [System.IO.Path]::GetFileNameWithoutExtension($icon)){
+                if ($fileNameWithoutExtension -eq [System.IO.Path]::GetFileNameWithoutExtension($icon)){
                   $command += " /icon $icon"
                   break
                 }
@@ -215,13 +216,11 @@ runs:
               $command += " /icon " + $iconType.FullName
             }
           } 
-          if ("${{ inputs.compression }}" -eq "upx") {
+          if ("$compression" -eq "upx") {
             $command += " /compress 2"
           } else {
             $command += " /compress 0"
           }
-
-          $command += " /silent verbose"
 
           if ("${{ inputs.x64 }}" -like "true"){
             Write-Output ("Invoking " + $command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + $fileNameWithoutExtension + "${{ inputs.x64_suffix }}.exe")
