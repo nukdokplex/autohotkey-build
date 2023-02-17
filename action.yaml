@@ -135,6 +135,7 @@ runs:
         $ahk = "$cwd\._ahk"
         $files = [System.Collections.ArrayList]@()
         $icons = [System.Collections.ArrayList]@()
+        $iconType = Get-Item "$cwd\${{ inputs.icon }}"
 
         if ((Get-Item "$cwd\${{ inputs.in }}") -is [System.IO.DirectoryInfo]) {
           Write-Output "Input is directory, searching files..."
@@ -153,15 +154,15 @@ runs:
         }
 
         if ("${{ inputs.icon }}" -ne ""){
-          if ((Get-Item "$cwd\${{ inputs.icon }}") -is [System.IO.DirectoryInfo]) {
+          if ($iconType -is [System.IO.DirectoryInfo]) {
             Write-Output "Icon is directory, searching files..."
 
-            $fileSpecs = ForEach-Object{("$cwd\${{ inputs.in }}\*.ico")}
+            $fileSpecs = ForEach-Object{("$cwd\${{ inputs.icon }}\*.ico")}
 
             Get-ChildItem -Path $fileSpecs | ForEach-Object {
                 $icons.Add($_.FullName)
             }
-          } elseif ((Get-Item "$cwd\${{ inputs.icon }}") -is [System.IO.FileInfo]) {
+          } elseif ($iconType -is [System.IO.FileInfo]) {
             Write-Output "Icon is file, adding it..."
 
             $icons.Add("$cwd\${{ inputs.icon }}")
