@@ -200,27 +200,37 @@ runs:
         $ahk2exe = "$ahk\ahk2exe\ahk2exe.exe"
 
         foreach($file in $files) {
+          $fileNameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($file)
           $command = "$ahk2exe"
           $command += " /in $file"
           if ("${{ inputs.icon }}" -ne "") {
-              $command += " /icon $cwd\${{ inputs.icon }}"
-          }
+            if ($iconType -is [System.IO.DirectoryInfo]){
+              foreach ($icon in $icons){
+                if ($fileNameWithoutExtension -e [System.IO.Path]::GetFileNameWithoutExtension($icon)){
+                  $command += " /icon $icon"
+                  break
+                }
+              }
+            } elseif ($iconType -is [System.IO.FileInfo]){
+              $command += " /icon " + $iconType.FullName
+            }
+          } 
           if ("${{ inputs.compression }}" -eq "upx") {
-              $command += " /compress 2"
+            $command += " /compress 2"
           } else {
-              $command += " /compress 0"
+            $command += " /compress 0"
           }
 
           $command += " /silent verbose"
 
           if ("${{ inputs.x64 }}" -like "true"){
-              Write-Output ("Invoking " + $command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + [System.IO.Path]::GetFileNameWithoutExtension($file) + "${{ inputs.x64_suffix }}.exe")
-              Invoke-Expression ($command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + [System.IO.Path]::GetFileNameWithoutExtension($file) + "${{ inputs.x64_suffix }}.exe")
+            Write-Output ("Invoking " + $command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + $fileNameWithoutExtension + "${{ inputs.x64_suffix }}.exe")
+            Invoke-Expression ($command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + $fileNameWithoutExtension + "${{ inputs.x64_suffix }}.exe")
           }
 
           if ("${{ inputs.x86 }}" -like "true"){
-              Write-Output ("Invoking " + $command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + [System.IO.Path]::GetFileNameWithoutExtension($file) + "${{ inputs.x86_suffix }}.exe")
-              Invoke-Expression ($command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + [System.IO.Path]::GetFileNameWithoutExtension($file) + "${{ inputs.x86_suffix }}.exe")
+            Write-Output ("Invoking " + $command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + $fileNameWithoutExtension + "${{ inputs.x86_suffix }}.exe")
+            Invoke-Expression ($command + ' /base "'+$x64BasePath+'"' + " /out $cwd\${{ inputs.out }}\" + $fileNameWithoutExtension + "${{ inputs.x86_suffix }}.exe")
           }
         }
 
