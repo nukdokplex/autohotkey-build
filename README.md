@@ -1,8 +1,11 @@
 # AutoHotkey Builder Action
 GitHub Action for building [AHK](https://autohotkey.com/) scripts with `AHK2Exe`.
 
-
 ![Continous Integration](https://img.shields.io/github/actions/workflow/status/nukdokplex/autohotkey-build/ci.yml?label=integration)
+
+Consider supporting this project. You can buy me a cup of tea (I don't drink coffee).
+- Bitcoin: [bc1qmr5m0z4p0gzqnfrztamrrpmgkw79725dsqdp03](bitcoin:BC1QMR5M0Z4P0GZQNFRZTAMRRPMGKW79725DSQDP03)
+- Ethereum: 0xb0627eBDb226b4D972661637091573596c5B3B7a
 
 ## Attention
 
